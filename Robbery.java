@@ -12,17 +12,51 @@ public class Robbery {
 		int[] sizes,
 		int[] worths
 	) {
-		// fill in here, change the return
-			return 2;
+		
+		return maximizeRobWorthRecur(capacity, sizes, worths, sizes.length);
 	}
 
+	private int maximizeRobWorthRecur(
+			int capacity,
+			int[] sizes,
+			int[] worths,
+			int n
+		) {
+	
+		int[][] dp = new int[sizes.length+1][capacity+1];
+		
+		if (n == 0 || capacity == 0) 
+	        return 0; 
+
+	    if (sizes[n-1] > capacity) 
+	       dp[sizes.length][capacity] = maximizeRobWorthRecur(capacity, sizes, worths, n-1); 
+
+	    else dp[sizes.length][capacity] = Math.max( worths[n-1] + maximizeRobWorthRecur(capacity-sizes[n-1], sizes, worths, n-1), 
+	    		maximizeRobWorthRecur(capacity, sizes, worths, n-1) 
+	                      ); 
+	    return dp[sizes.length][capacity];
+	}
+	
 	public int maximizeRobWorthBottomUp(
 		int capacity,
 		int[] sizes,
 		int[] worths
 	) {
-		// fill in here, change the return
-		return 2;
+		int[][] dp = new int[sizes.length+1][capacity+1];
+		
+		for(int i = 0; i <= sizes.length; i++) {
+			for(int j = 0; j <= capacity; j++) {
+				if (i==0 || j==0) {
+					dp[i][j] = 0; 
+				}else if(sizes[i-1] > j) {
+					dp[i][j] = dp[i-1][j];
+				}else {		
+					dp[i][j] = Math.max(dp[i-1][j], worths[i-1] + dp[i-1][j - sizes[i-1]]);
+				}
+			}
+		}
+		
+		return dp[sizes.length][capacity];
 	}
 
 /**
